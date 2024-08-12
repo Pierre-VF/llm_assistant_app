@@ -13,3 +13,8 @@ Ensure that Python 3.12 is used (if your machine does not supoint to it by defau
 Install the dependencies with development mode:
 > poetry install --all-extras
 
+Then create your **.env** file:
+```
+ANTHROPIC_API_KEY='ThisIsYourAPIkey'
+DEBUG=False
+```
