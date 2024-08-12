@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "llm-assistant-app"
+version = "0.1.0"
+description = "A small LLM app prototype"
+authors = ["Pierre V-F <pierre@pierrevf.consulting>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "llm_assistant_app"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+httpx = "^0.27.0"
+fastapi = "^0.112.0"
+uvicorn = "^0.30.5"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.5.7"
+pytest = "^8.3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
