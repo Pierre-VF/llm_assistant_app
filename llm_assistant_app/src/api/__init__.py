@@ -1,6 +1,6 @@
 import anthropic
 from fastapi import FastAPI
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse
 
 from .. import settings
 
@@ -59,3 +59,32 @@ async def nerdy_joker():
     out = message.content
     print(out)
     return PlainTextResponse(out[0].text)
+
+
+# Response with streaming
+async def _request_poem_about(theme: str):
+    async with anthropic_client.messages.stream(
+        max_tokens=1024,
+        system="""You are a world-class poet. 
+        You respond only with medium sized poems below 20 verses. 
+        Also, you include only the poem, nothing more.""",
+        messages=[
+            {
+                "role": "user",
+                "content": f"Generate a poem about {theme}",
+            }
+        ],
+        model=anthropic_model,
+    ) as stream:
+        async for text in stream.text_stream:
+            yield text
+
+
+@app.get("/streamed_poem_about", response_class=StreamingResponse)
+async def streamed_poem_about(theme: str):
+    """This endpoint generates a short poem about a theme
+
+    :param theme: theme of the poem to generate
+    :return: a plain text version of the poem
+    """
+    return StreamingResponse(_request_poem_about(theme))
