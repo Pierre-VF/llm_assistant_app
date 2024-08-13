@@ -1,0 +1,30 @@
+name: GCP deployment simulator
+
+on:
+  push:
+    # Change this with the relevant branch 
+    branches: [ deploy ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Generating .env file
+      run: |
+        echo "Generating .env file..."
+        
+        # Read the template file
+        template=$(cat resources/.env.template)
+        
+        # Replace placeholders with actual values
+        echo "${template}" | sed \
+          -e 's/__ANTHROPIC_API_KEY__/${{ secrets.ANTHROPIC_API_KEY }}/g' \
+          -e 's/__DEBUG__/False/g' \
+          > .env
+
+    - name: Deploying the app
+      run: |
+        echo "Replace this by code that actually does something"
