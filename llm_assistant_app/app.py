@@ -7,51 +7,27 @@ Notes:
 
 """
 
-import anthropic
 from fastapi import FastAPI
-from fastapi.responses import PlainTextResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 
 # To support different relative import syntax between tools and calls
 try:
-    from src import settings  # type: ignore
+    from src import api, ui  # type: ignore
 except ImportError:
-    from .src import settings
+    from .src import api, ui
 
 app = FastAPI(title="A basic LLM-based app")
 
-anthropic_client = anthropic.AsyncAnthropic(
-    api_key=settings.anthropic_api_key,
-)
+
+# Mounting sub-apps
+app.mount("/ui", ui.app)
+app.mount("/api", api.app)
 
 
-# Redirecting base to docs
+# Redirecting base to the UI
 @app.get("/")
 async def home():
-    return RedirectResponse("/docs")
-
-
-@app.get("/short_poem_about", response_class=PlainTextResponse)
-async def poem_about(theme: str):
-    """This endpoint generates a short poem about a theme
-
-    :param theme: theme of the poem to generate
-    :return: a plain text version of the poem
-    """
-    message = await anthropic_client.messages.create(
-        max_tokens=1024,
-        system="You are a world-class poet. Respond only with short poems.",
-        messages=[
-            {
-                "role": "user",
-                "content": f"Generate a poem about {theme}",
-            }
-        ],
-        model="claude-3-5-sonnet-20240620",
-    )
-    print(f"Usage: {message.usage}")
-    out = message.content
-    print(out)
-    return PlainTextResponse(out[0].text)
+    return RedirectResponse("/ui/")
 
 
 if __name__ == "__main__":
