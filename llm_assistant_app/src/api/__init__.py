@@ -10,6 +10,9 @@ anthropic_client = anthropic.AsyncAnthropic(
     api_key=settings.anthropic_api_key,
 )
 
+# Choose a model from here: https://docs.anthropic.com/en/docs/about-claude/models
+anthropic_model = "claude-3-haiku-20240307"
+
 
 @app.get("/short_poem_about", response_class=PlainTextResponse)
 async def poem_about(theme: str):
@@ -27,7 +30,7 @@ async def poem_about(theme: str):
                 "content": f"Generate a poem about {theme}",
             }
         ],
-        model="claude-3-5-sonnet-20240620",
+        model=anthropic_model,
     )
     print(f"Usage: {message.usage}")
     out = message.content
@@ -50,7 +53,7 @@ async def nerdy_joker():
                 "content": "Tell me a joke",
             }
         ],
-        model="claude-3-5-sonnet-20240620",
+        model=anthropic_model,
     )
     print(f"Usage: {message.usage}")
     out = message.content
